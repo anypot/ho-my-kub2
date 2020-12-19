@@ -1,0 +1,11 @@
+logs:
+  access:
+    enabled: true
+    fields:
+      general:
+        defaultmode: keep
+        names:
+          StartUTC: drop
+env:
+- name: TZ
+  value: Europe/Paris
