@@ -5,6 +5,7 @@ usage () {
 Usage: $(basename $0)
 -h, --help                                     Print this help
 -c, --helm-charts < all | chart1,chart2,... >  Install Helm charts
+-i, --infra                                    Apply Terraform plan
 EOF
 }
 
@@ -33,6 +34,11 @@ charts_install () {
   done
 }
 
+infra_deploy () {
+  cd ${INFRADIR} && terraform init && terraform plan
+  # terraform apply
+}
+
 
 PARAMS=""
 while (( "$#" )); do
@@ -40,6 +46,10 @@ while (( "$#" )); do
     -h|--help)
       usage
       exit 0
+      ;;
+    -i|--infra)
+      INFRA="install"
+      shift
       ;;
     -c|--helm-charts)
       if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
@@ -65,8 +75,10 @@ done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
 
+
 BASEDIR=$(dirname $(readlink -f $0))
 INFRADIR=${BASEDIR}/plan
 CHARTSDIR=${BASEDIR}/charts
 
+[[ ! -z ${INFRA+x} ]] && infra_deploy
 [[ ! -z ${CHARTS+x} ]] && charts_install
