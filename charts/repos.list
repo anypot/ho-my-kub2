@@ -1,0 +1,6 @@
+NAME          	URL                                              
+stable        	https://charts.helm.sh/stable                    
+sealed-secrets	https://bitnami-labs.github.io/sealed-secrets    
+traefik       	https://helm.traefik.io/traefik                  
+bitnami       	https://charts.bitnami.com/bitnami               
+rancher-stable	https://releases.rancher.com/server-charts/stable
