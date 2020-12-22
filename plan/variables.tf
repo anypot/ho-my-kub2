@@ -30,7 +30,6 @@ variable "k3os_iso" {
 
 variable "disk_storage" {
   description = "Disk storage for k3s VMs"
-  type        = string
   default     = "local-lvm"
 }
 
@@ -60,6 +59,36 @@ variable "server_memory" {
 
 variable "server_disk_size" {
   description = "Disk size for k3s servers (in GB)"
+  type        = number
+  default     = 32
+}
+
+variable "agent_count" {
+  description = "Number of k3s agents"
+  type        = number
+  default     = 1
+}
+
+variable "agent_names" {
+  description = "k3s agent names"
+  type        = list(string)
+  default     = ["agent1","agent2","agent3"]
+}
+
+variable "agent_cores" {
+  description = "Number of cores for k3s agents"
+  type        = number
+  default     = 1
+}
+
+variable "agent_memory" {
+  description = "Memory for k3s agents (in MB)"
+  type        = number
+  default     = 1024
+}
+
+variable "agent_disk_size" {
+  description = "Disk size for k3s agents (in GB)"
   type        = number
   default     = 32
 }
