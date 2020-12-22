@@ -10,13 +10,13 @@ EOF
 
 charts_install () {
   local to_install=""
-  local chart_list_all=$(find charts/* -maxdepth 1 -type d -exec basename {} \;)
+  local chart_list_all=$(find ${CHARTSDIR}/* -maxdepth 1 -type d -exec basename {} \;)
   
   [[ ${CHARTS} == "all" ]] && to_install=${chart_list_all} || to_install=${CHARTS//,/ }
   
   for chart in ${to_install}; do
-    [[ ! -d charts/${chart} ]] && echo "${chart} does not exist, skipping..." && continue
-    helm repo add $(cat charts/${chart}/chart_repo)
+    [[ ! -d ${CHARTSDIR}/${chart} ]] && echo "${chart} does not exist, skipping..." && continue
+    helm repo add $(cat ${CHARTSDIR}/${chart}/chart_repo)
   done
   helm repo update
 
@@ -24,12 +24,12 @@ charts_install () {
   local release=""
   local namespace=""
   for chart in ${to_install}; do
-    [[ ! -d charts/${chart} ]] && echo "${chart} does not exist, skipping..." && continue
+    [[ ! -d ${CHARTSDIR}/${chart} ]] && echo "${chart} does not exist, skipping..." && continue
     release=${chart}
-    repo_name=$(cat charts/${chart}/chart_repo | cut -d " " -f1)
-    [[ -f charts/${chart}/namespace ]] && namespace=$(cat charts/${chart}/namespace) || namespace=${chart}
+    repo_name=$(cat ${CHARTSDIR}/${chart}/chart_repo | cut -d " " -f1)
+    [[ -f ${CHARTSDIR}/${chart}/namespace ]] && namespace=$(cat ${CHARTSDIR}/${chart}/namespace) || namespace=${chart}
     kubectl create ns ${namespace}
-    helm upgrade ${release} ${repo_name}/${chart} -i -f charts/${chart}/values.yaml -n ${namespace}
+    helm upgrade ${release} ${repo_name}/${chart} -i -f ${CHARTSDIR}/${chart}/values.yaml -n ${namespace}
   done
 }
 
@@ -64,5 +64,9 @@ while (( "$#" )); do
 done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
+
+BASEDIR=$(dirname $(readlink -f $0))
+INFRADIR=${BASEDIR}/plan
+CHARTSDIR=${BASEDIR}/charts
 
 [[ ! -z ${CHARTS+x} ]] && charts_install
