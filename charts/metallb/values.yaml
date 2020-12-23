@@ -1,8 +1,8 @@
 configInline:
   peers:
   - peer-address: 192.168.1.1
-    peer-asn: 64501
-    my-asn: 64500
+    peer-asn: 64513
+    my-asn: 64512
   address-pools:
   - name: default
     protocol: bgp
