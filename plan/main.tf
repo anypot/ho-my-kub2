@@ -24,6 +24,7 @@ resource "proxmox_vm_qemu" "k3s-servers" {
   cores       = var.server_cores
   memory      = var.server_memory
   scsihw      = "virtio-scsi-pci"
+  boot        = "order=scsi0;ide2"
   onboot      = false
   agent       = 1
   iso         = var.k3os_iso
@@ -59,6 +60,7 @@ resource "proxmox_vm_qemu" "k3s-agents" {
   cores       = var.agent_cores
   memory      = var.agent_memory
   scsihw      = "virtio-scsi-pci"
+  boot        = "order=scsi0;ide2"
   onboot      = false
   agent       = 1
   iso         = var.k3os_iso
