@@ -1,3 +1,6 @@
+service:
+  spec:
+    externalTrafficPolicy: Local
 logs:
   access:
     enabled: true
