@@ -63,6 +63,11 @@ variable "server_disk_size" {
   default     = 32
 }
 
+variable "server_mac_prefix" {
+  description = "Mac address before last 4 bits for k3s servers"
+  default     = "12:34:56:78:9a:b"
+}
+
 variable "agent_count" {
   description = "Number of k3s agents"
   type        = number
@@ -91,4 +96,9 @@ variable "agent_disk_size" {
   description = "Disk size for k3s agents (in GB)"
   type        = number
   default     = 32
+}
+
+variable "agent_mac_prefix" {
+  description = "Mac address before last 4 bits for k3s agents"
+  default     = "12:34:56:78:9a:c"
 }

@@ -38,7 +38,7 @@ resource "proxmox_vm_qemu" "k3s-servers" {
 
   network {
     model    = "virtio"
-    macaddr  = "5a:fe:6c:96:40:6${count.index}"
+    macaddr  = "${var.server_mac_prefix}${count.index}"
     bridge   = "vmbr0"
     firewall = true
   }
@@ -74,7 +74,7 @@ resource "proxmox_vm_qemu" "k3s-agents" {
 
   network {
     model    = "virtio"
-    macaddr  = "5a:fe:6c:96:40:7${count.index}"
+    macaddr  = "${var.agent_mac_prefix}${count.index}"
     bridge   = "vmbr0"
     firewall = true
   }
