@@ -5,7 +5,7 @@ usage () {
 Usage: $(basename $0)
 -h, --help                                     Print this help
 -c, --helm-charts < all | chart1,chart2,... >  Install Helm charts
--i, --infra                                    Apply Terraform plan
+-i, --infra < name >                           Apply Terraform plan with <name>.tfvars in workspace <name>
 EOF
 }
 
@@ -35,8 +35,16 @@ charts_install () {
 }
 
 infra_deploy () {
-  cd ${INFRADIR} && terraform init && terraform plan
-  # terraform apply
+  [[ ! -f ${INFRADIR}/${INFRA}.tfvars ]] && echo "${INFRADIR}/${INFRA}.tfvars does not exist !" && exit 1
+  [[ -f ${INFRADIR}/terraform.tfvars ]] && rm ${INFRADIR}/terraform.tfvars
+  ln -s ${INFRADIR}/${INFRA}.tfvars ${INFRADIR}/terraform.tfvars
+  cd ${INFRADIR}
+  terraform init
+  terraform workspace list | grep -sw ${INFRA}
+  [[ $? == 1 ]] && terraform workspace new ${INFRA}
+  terraform workspace select ${INFRA}
+  terraform plan
+  terraform apply
 }
 
 
@@ -48,8 +56,14 @@ while (( "$#" )); do
       exit 0
       ;;
     -i|--infra)
-      INFRA="install"
-      shift
+      if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+        INFRA=$2
+        shift
+      else
+        echo "Error: Argument for $1 is missing" >&2
+	usage
+	exit 1
+      fi
       ;;
     -c|--helm-charts)
       if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
