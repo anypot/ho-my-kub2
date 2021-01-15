@@ -6,7 +6,23 @@ Usage: $(basename $0)
 -h, --help                                     Print this help
 -c, --helm-charts < all | chart1,chart2,... >  Install Helm charts
 -i, --infra < name >                           Apply Terraform plan with <name>.tfvars in workspace <name>
+-s, --create-secrets                           Create secrets with Sealed Secrets
 EOF
+}
+
+create_secret () {
+  local secret_name=$1
+  local namespace=$2
+  kubectl create secret generic ${secret_name} -n ${namespace} --dry-run=client --from-env-file=${SECRETSDIR}/${secret_name} -o yaml > ${SECRETSDIR}/${secret_name}.yaml
+  kubeseal -o yaml --controller-name=sealed-secrets < ${SECRETSDIR}/${secret_name}.yaml > infra_apps/sealed-${secret_name}.yaml
+  kubectl create -f infra_apps/sealed-${secret_name}.yaml
+  rm ${SECRETSDIR}/${secret_name}.yaml
+}
+
+create_secrets () {
+  for file in $(ls ${SECRETSDIR}); do
+    [[ ${file} != *_namespace ]] && create_secret "${file}" "$(cat ${SECRETSDIR}/${file}_namespace)"
+  done
 }
 
 charts_install () {
@@ -55,10 +71,14 @@ while (( "$#" )); do
       usage
       exit 0
       ;;
+    -s|--create-secrets)
+      SECRETS="gocreate"
+      shift
+      ;;
     -i|--infra)
       if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
         INFRA=$2
-        shift
+        shift 2
       else
         echo "Error: Argument for $1 is missing" >&2
 	usage
@@ -91,8 +111,10 @@ eval set -- "$PARAMS"
 
 
 BASEDIR=$(dirname $(readlink -f $0))
+SECRETSDIR=${BASEDIR}/secrets
 INFRADIR=${BASEDIR}/plan
 CHARTSDIR=${BASEDIR}/charts
 
 [[ ! -z ${INFRA+x} ]] && infra_deploy
 [[ ! -z ${CHARTS+x} ]] && charts_install
+[[ ! -z ${SECRETS+x} ]] && create_secrets
