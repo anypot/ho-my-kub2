@@ -1,0 +1,10 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: ho-my-kub
+  namespace: fleet-local
+spec:
+  branch: master
+  repo: https://github.com/anypot/ho-my-kub2.git
+  paths:
+  - apps

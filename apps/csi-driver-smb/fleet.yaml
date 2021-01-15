@@ -1,0 +1,12 @@
+namespace: kube-system
+helm:
+  chart: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts/v0.6.0/csi-driver-smb-v0.6.0.tgz
+targetCustomizations:
+- name: local
+  clusterSelector:
+    matchLabels:
+      name: local
+  helm:
+    values:
+      controller:
+        replicas: 1
