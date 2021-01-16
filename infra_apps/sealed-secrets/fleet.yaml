@@ -1,6 +1,6 @@
 defaultNamespace: kube-system
 helm:
-  releaseName: csi-driver-smb
+  releaseName: sealed-secrets
   chart: https://github.com/bitnami-labs/sealed-secrets/releases/download/helm-v1.13.2-r2/sealed-secrets-1.13.2-r2.tgz
   #repo: https://bitnami-labs.github.io/sealed-secrets
   #version: 1.13.2-r2

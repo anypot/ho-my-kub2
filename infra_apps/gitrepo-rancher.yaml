@@ -7,4 +7,5 @@ spec:
   branch: main
   repo: https://github.com/anypot/ho-my-kub2
   paths:
-  - infra_apps
+  - infra_apps/csi-driver-smb
+  - infra_apps/sealed-secrets
