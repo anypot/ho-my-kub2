@@ -2,7 +2,7 @@ namespace: kube-system
 helm:
   releaseName: csi-driver-smb
   repo: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
-  version: 0.6.0
+  version: v0.6.0
   values:
     controller:
       replicas: 1
