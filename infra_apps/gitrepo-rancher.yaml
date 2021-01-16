@@ -9,3 +9,4 @@ spec:
   paths:
   - infra_apps/csi-driver-smb
   - infra_apps/sealed-secrets
+  - infra_apps/misc
