@@ -1,9 +1,5 @@
 terraform {
   required_providers {
-    kubernetes-alpha = {
-      source = "hashicorp/kubernetes-alpha"
-      version = "0.3.2"
-    }
     helm = {
       source = "hashicorp/helm"
       version = "2.0.3"
@@ -13,10 +9,6 @@ terraform {
       version = "1.12.0"
     }
   }
-}
-
-provider "kubernetes-alpha" {
-  config_path          = "~/.kube/config"
 }
 
 provider "helm" {
@@ -30,6 +22,7 @@ provider "rancher2" {
   api_url   = var.api_url
   insecure  = true
   bootstrap = true
+  retries   = 60
 }
 
 provider "rancher2" {
@@ -44,7 +37,6 @@ resource "helm_release" "cert-manager" {
   chart            = "cert-manager"
   namespace        = "cert-manager"
   create_namespace = true
-  wait             = true
   set {
     name  = "installCRDs"
     value = "true"
@@ -57,7 +49,6 @@ resource "helm_release" "rancher" {
   chart            = "rancher"
   namespace        = "cattle-system"
   create_namespace = true
-  wait             = true
   values           = [file("rancher_values.yaml")]
   depends_on       = [helm_release.cert-manager]
 }
@@ -80,23 +71,9 @@ resource "rancher2_global_role_binding" "new_admin" {
   user_id        = rancher2_user.new_admin.id
 }
 
-resource "kubernetes_manifest" "gitrepo-rancher" {
-  provider = kubernetes-alpha
-  manifest = {
-    apiVersion = "fleet.cattle.io/v1alpha1"
-    kind = "GitRepo"
-    metadata = {
-      name = "homykub"
-      namespace = "fleet-local"
-    }
-    spec = {
-      branch = "main"
-      repo = "https://github.com/anypot/ho-my-kub2"
-      paths = [
-        "infra_apps/csi-driver-smb",
-        "infra_apps/sealed-secrets",
-        "infra_apps/misc",
-      ]
-    }
+resource "null_resource" "gitrepo-rancher" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f gitrepos/gitrepo-rancher.yaml"
   }
+  depends_on = [rancher2_bootstrap.admin]
 }
