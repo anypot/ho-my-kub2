@@ -1,0 +1,9 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: ClusterGroup
+metadata:
+  name: labs
+  namespace: fleet-default
+spec:
+  selector:
+    matchLabels:
+      env: lab
