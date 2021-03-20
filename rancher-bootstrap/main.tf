@@ -73,7 +73,7 @@ resource "rancher2_global_role_binding" "new_admin" {
 
 resource "null_resource" "gitrepo-rancher" {
   provisioner "local-exec" {
-    command = "kubectl apply -f gitrepos/gitrepo-rancher.yaml"
+    command = "kubectl apply -f gitrepo-rancher.yaml"
   }
   depends_on = [rancher2_bootstrap.admin]
 }
