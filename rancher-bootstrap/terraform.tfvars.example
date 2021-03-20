@@ -1,0 +1,5 @@
+api_url            = "https://rancher.home"
+admin_password     = "blahblah"
+telemetry          = false
+new_admin_user     = "admin2"
+new_admin_password = "iamthenewadmin"
